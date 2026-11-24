@@ -20,9 +20,30 @@ create table if not exists reservas.logs (
 create index if not exists logs_agent_created_idx on reservas.logs (agent, created_at);
 create index if not exists logs_level_created_idx on reservas.logs (level, created_at);
 
--- A definir junto con el diseño del agente: reservas en sí (cabaña, fechas,
--- huésped, estado), conexión a Google Calendar (tokens OAuth propios, como
--- agents.meli_connection en D:\agents) y qué guarda la generación de PDF de
--- tarjetas (plantilla de Canva exportada, datos que se insertan). No se
--- crea nada de eso todavía para no inventar columnas antes de tener claro
--- el flujo real.
+-- Una caja por cabaña real — solo nombre por ahora. Si en algún momento cada
+-- cabaña necesita su propio calendario (hoy se decidió uno solo compartido,
+-- ver ARQUITECTURA.md §2), es la columna que se agrega, no otra tabla.
+create table if not exists reservas.cabanas (
+  id uuid primary key default gen_random_uuid(),
+  nombre text not null unique,
+  created_at timestamptz not null default now()
+);
+
+-- Una reserva = un evento real en el Google Calendar compartido
+-- (google_event_id es el id que devuelve la API al crearlo, para poder
+-- editarlo/cancelarlo después sin tener que buscarlo por fecha). No se
+-- borra nunca aunque se cancele — `estado` lleva el historial real.
+create table if not exists reservas.reservas (
+  id uuid primary key default gen_random_uuid(),
+  cabana_id uuid not null references reservas.cabanas (id),
+  huesped_nombre text not null,
+  huesped_contacto text,
+  fecha_entrada date not null,
+  fecha_salida date not null,
+  estado text not null default 'confirmada', -- confirmada | cancelada
+  google_event_id text,
+  chat_id text not null, -- quién la dio de alta, mismo criterio que conversation_messages en D:\agents
+  created_at timestamptz not null default now()
+);
+
+create index if not exists reservas_cabana_fechas_idx on reservas.reservas (cabana_id, fecha_entrada, fecha_salida);

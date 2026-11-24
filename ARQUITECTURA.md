@@ -26,10 +26,16 @@ Este agente es determinístico de punta a punta: fechas, estados y campos fijos,
 
 Ver CLAUDE.md, sección "Estado" — ahí está el orden real (infraestructura antes que lógica).
 
-Puntos abiertos específicos de este agente:
-- **Calendario**: Google Calendar vía API (OAuth, mismo patrón que `agents.meli_connection` en BOLTEN — tabla propia con access/refresh token). Alternativa descartada por ahora: un calendario propio en la base en vez de Google Calendar — a definir con el usuario si la cabaña necesita que el calendario sea visible/editable fuera del bot.
-- **PDF de tarjeta de reservación**: `pdf-lib` ya está en las dependencias (se usa también en BOLTEN). Falta decidir si la plantilla de Canva se exporta como PDF con campos de formulario (se rellenan por campo) o como imagen de fondo + texto superpuesto por coordenadas (más frágil a cambios de diseño, pero no depende de que Canva exporte campos rellenables).
-- **Modelo de datos de una reserva**: cabaña (si hay más de una), fechas de entrada/salida, huésped, estado (confirmada/cancelada/pendiente de seña), de dónde viene el pedido (hoy se asume Telegram, mismo patrón que BOLTEN).
+Decidido:
+- **Varias cabañas** — toda reserva necesita distinguir a cuál pertenece.
+- **Alta de reserva a mano por Telegram** — la persona le escribe los datos al bot (nombre, fechas, cabaña), no hay integración con ningún canal de venta.
+- **Calendario**: Google Calendar vía cuenta de servicio (no OAuth de usuario — no hay login interactivo, y una cuenta de servicio no vence como un refresh token de "installed app"). El JSON de la cuenta de servicio da `client_email` + `private_key`; ese email se comparte como editor en el/los calendario(s) reales.
+- **PDF de tarjeta de reservación**: plantilla con formato específico ya diseñado en Canva — `pdf-lib` (ya en las dependencias) para generarlo.
+
+Abierto (próximo paso):
+- Un calendario de Google por cabaña, o uno solo compartido con la cabaña como dato del evento (color/título) — afecta el esquema de `GOOGLE_CALENDAR_ID` (uno fijo vs. uno por cabaña en la tabla de cabañas).
+- Cómo exportó Canva la plantilla — PDF con campos de formulario (se completan por nombre de campo) o imagen fija + texto superpuesto por coordenadas (pdf-lib puede hacer ambas, pero la segunda es más frágil a cualquier cambio de diseño).
+- Modelo de datos final de una reserva y de cabaña (ver esquema abajo, a confirmar).
 
 ## 3. Contrato de agente (heredado de `D:\agents`)
 
