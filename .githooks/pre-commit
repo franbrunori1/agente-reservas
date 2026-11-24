@@ -1,0 +1,6 @@
+#!/bin/sh
+# Corre antes de cada commit — ver CLAUDE.md para activarlo en un clon nuevo
+# (`git config core.hooksPath .githooks`, una sola vez). Chequea tipos y que
+# no se rompa el contrato de estructura de agentes (ARQUITECTURA.md §3).
+
+npm run precommit
