@@ -12,7 +12,6 @@
   "dependencies": {
     "dotenv": "^17.2.0",
     "googleapis": "^144.0.0",
-    "openai": "^7.60.0",
     "pdf-lib": "^1.17.1",
     "pg": "^8.13.0"
   },

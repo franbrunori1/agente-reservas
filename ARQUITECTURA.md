@@ -7,7 +7,7 @@ Nace como pedido explícito: un agente para gestionar reservas de cabañas, para
 ## 1. Qué se copió de `D:\agents` y por qué
 
 Copiado tal cual (genérico, sin saber de MeLi ni de ningún agente puntual):
-- `src/core/health.ts`, `logger.ts`, `conversation.ts`, `llm.ts`, `telegram-api.ts`, `telegram-commands.ts`, `telegram-webhook.ts`, `telegram-webapp.ts`, `date-range.ts`, `html.ts`.
+- `src/core/health.ts`, `logger.ts`, `telegram-api.ts`, `telegram-commands.ts`, `telegram-webhook.ts`, `telegram-webapp.ts`, `date-range.ts`, `html.ts`.
 - `src/channels/` completo (contrato `Channel` + implementación de Telegram).
 - `src/triggers/check-structure.ts` (el validador de contrato de agente, sección 3 de este mismo archivo).
 - `.githooks/pre-commit`.
@@ -16,7 +16,11 @@ Adaptado al proyecto propio (cambia el nombre de schema/tablas, nada más):
 - `src/memory/client.ts` — mismo patrón (`pg.Pool` único, nadie más abre conexión), pero contra la base de este proyecto, schema `reservas` en vez de `agents`.
 - `src/memory/schema.sql`, `src/triggers/status.ts`, `src/triggers/tail-logs.ts` — mismas ideas, nombres propios.
 
-No se copió nada de: `core/meli-auth.ts`, `src/agents/*` de BOLTEN, ninguna credencial, ningún dato real.
+No se copió: `core/meli-auth.ts`, `src/agents/*` de BOLTEN, ninguna credencial, ningún dato real. Tampoco `core/llm.ts` ni `core/conversation.ts` (ventana de charla libre) — decisión explícita, ver §2.1.
+
+### 1.1 Sin LLM, a propósito
+
+Este agente es determinístico de punta a punta: fechas, estados y campos fijos, nada que necesite "criterio" de un modelo. Mismo patrón que el agente `sales` de BOLTEN (comandos fijos, sin orquestador con LLM) — no el de `marketing-ads`. Por eso no se copiaron `core/llm.ts` (fábrica de cliente OpenAI) ni `core/conversation.ts` (ventana de charla para dar contexto a un LLM) ni la dependencia `openai` del `package.json`: no hay nada que las use. Si en algún momento aparece un caso real que sí necesite lenguaje libre, se suman ahí — no antes.
 
 ## 2. Qué falta decidir
 
