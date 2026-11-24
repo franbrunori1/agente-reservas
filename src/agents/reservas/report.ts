@@ -1,31 +1,21 @@
 import { escapeHtml } from "../../core/html.js";
 import { logEvent, errorContext } from "../../core/logger.js";
 import { createReservationEvent } from "./tools/calendar.js";
-import { addCabana, findCabanaByNombre, insertReserva, listCabanas } from "./store.js";
+import { findCabanaByNombre, insertReserva, listCabanas } from "./store.js";
 import type { ReservarInput } from "./commands.js";
 
+// Las 4 cabañas son fijas (ver schema.sql) — no hay comando para agregar
+// o quitar, a propósito.
 export async function buildCabanasReport(): Promise<string> {
   const cabanas = await listCabanas();
-  if (cabanas.length === 0) {
-    return "Todavía no hay ninguna cabaña — agregá una con <b>/agregar_cabana &lt;nombre&gt;</b>.";
-  }
   const lista = cabanas.map((c) => `• ${escapeHtml(c.nombre)}`).join("\n");
   return `<b>Cabañas</b>\n${lista}`;
-}
-
-export async function handleAgregarCabana(nombre: string): Promise<string> {
-  const creada = await addCabana(nombre);
-  if (!creada) return `Ya existe una cabaña llamada "${escapeHtml(nombre)}".`;
-  return `Cabaña agregada: <b>${escapeHtml(creada.nombre)}</b>.`;
 }
 
 export async function handleReservar(chatId: string, input: ReservarInput): Promise<string> {
   const cabana = await findCabanaByNombre(input.cabana);
   if (!cabana) {
-    return (
-      `No encuentro la cabaña "${escapeHtml(input.cabana)}". Mirá <b>/cabanas</b> para ver los nombres exactos, ` +
-      `o agregala con <b>/agregar_cabana ${escapeHtml(input.cabana)}</b>.`
-    );
+    return `No encuentro la cabaña "${escapeHtml(input.cabana)}". Mirá <b>/cabanas</b> para ver los nombres exactos.`;
   }
 
   let eventId: string;

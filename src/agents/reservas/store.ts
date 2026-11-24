@@ -1,4 +1,6 @@
 // Acceso a la base — solo esto toca reservas.cabanas/reservas.reservas.
+// Las cabañas son fijas (4, cargadas en schema.sql), por eso no hay insert
+// acá — solo lectura.
 
 import { db } from "../../memory/client.js";
 
@@ -15,14 +17,6 @@ export async function listCabanas(): Promise<Cabana[]> {
 export async function findCabanaByNombre(nombre: string): Promise<Cabana | null> {
   const { rows } = await db.query("select id, nombre from reservas.cabanas where lower(nombre) = lower($1)", [nombre]);
   return rows[0] ?? null;
-}
-
-/** Devuelve null si ya existe una con ese nombre (sin distinguir mayúsculas). */
-export async function addCabana(nombre: string): Promise<Cabana | null> {
-  const existing = await findCabanaByNombre(nombre);
-  if (existing) return null;
-  const { rows } = await db.query("insert into reservas.cabanas (nombre) values ($1) returning id, nombre", [nombre]);
-  return rows[0];
 }
 
 export interface NuevaReserva {

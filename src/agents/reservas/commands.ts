@@ -60,9 +60,3 @@ export function parseReservarCommand(text: string): ParsedReservar | null {
 export function isCabanasCommand(text: string): boolean {
   return normalizeCommand(text) === "cabanas";
 }
-
-/** Devuelve el nombre a agregar, o null si el texto no es este comando (incluido el caso de faltar el nombre). Preserva mayúsculas del nombre — normalizeCommand no sirve acá porque baja todo a minúsculas. */
-export function parseAgregarCabanaCommand(text: string): string | null {
-  const match = text.trim().match(/^\/agregar_cabana(?:@\S+)?\s+(.+)$/i);
-  return match ? match[1].trim() : null;
-}

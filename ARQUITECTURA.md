@@ -27,15 +27,16 @@ Este agente es determinístico de punta a punta: fechas, estados y campos fijos,
 Ver CLAUDE.md, sección "Estado" — ahí está el orden real (infraestructura antes que lógica).
 
 Decidido:
-- **Varias cabañas** — toda reserva necesita distinguir a cuál pertenece.
+- **4 cabañas, fijas** — no hay (ni va a haber) comando para agregar/quitar. Se cargan una sola vez con un `insert` en `src/memory/schema.sql` (falta completar con los nombres reales).
 - **Alta de reserva a mano por Telegram** — la persona le escribe los datos al bot (nombre, fechas, cabaña), no hay integración con ningún canal de venta.
-- **Calendario**: Google Calendar vía cuenta de servicio (no OAuth de usuario — no hay login interactivo, y una cuenta de servicio no vence como un refresh token de "installed app"). El JSON de la cuenta de servicio da `client_email` + `private_key`; ese email se comparte como editor en el/los calendario(s) reales.
+- **Calendario único compartido** (no uno por cabaña) — cada evento lleva la cabaña en el título, `GOOGLE_CALENDAR_ID` es un solo valor fijo.
+- **Google Calendar vía cuenta de servicio** (no OAuth de usuario — no hay login interactivo, y una cuenta de servicio no vence como un refresh token de "installed app"). El JSON de la cuenta de servicio da `client_email` + `private_key`; ese email se comparte como editor del calendario real.
 - **PDF de tarjeta de reservación**: plantilla con formato específico ya diseñado en Canva — `pdf-lib` (ya en las dependencias) para generarlo.
 
 Abierto (próximo paso):
-- Un calendario de Google por cabaña, o uno solo compartido con la cabaña como dato del evento (color/título) — afecta el esquema de `GOOGLE_CALENDAR_ID` (uno fijo vs. uno por cabaña en la tabla de cabañas).
-- Cómo exportó Canva la plantilla — PDF con campos de formulario (se completan por nombre de campo) o imagen fija + texto superpuesto por coordenadas (pdf-lib puede hacer ambas, pero la segunda es más frágil a cualquier cambio de diseño).
-- Modelo de datos final de una reserva y de cabaña (ver esquema abajo, a confirmar).
+- Los 4 nombres reales de las cabañas (completar el `insert` de `schema.sql`).
+- Cómo exportó/exporta Canva la plantilla — PDF con campos de formulario (se completan por nombre de campo) o imagen fija + texto superpuesto por coordenadas (pdf-lib puede hacer ambas, pero la segunda es más frágil a cualquier cambio de diseño).
+- Credenciales reales de la cuenta de servicio de Google (`GOOGLE_CALENDAR_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_CALENDAR_PRIVATE_KEY`, `GOOGLE_CALENDAR_ID`) para probar `/reservar` de punta a punta.
 
 ## 3. Contrato de agente (heredado de `D:\agents`)
 
