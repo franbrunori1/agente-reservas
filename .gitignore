@@ -5,3 +5,9 @@ dist/
 
 .vercel
 .env*
+
+# Material real (tarifas, plantillas) — nunca al repo, solo referencia local.
+docs-privados/
+
+.vercel
+.env*

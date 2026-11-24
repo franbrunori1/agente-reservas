@@ -31,10 +31,21 @@ create table if not exists reservas.cabanas (
   created_at timestamptz not null default now()
 );
 
--- TODO: completar con los 4 nombres reales y correr una sola vez.
--- insert into reservas.cabanas (nombre) values
---   ('<cabaña 1>'), ('<cabaña 2>'), ('<cabaña 3>'), ('<cabaña 4>')
--- on conflict (nombre) do nothing;
+insert into reservas.cabanas (nombre) values
+  ('Cabaña 1'), ('Cabaña 2'), ('Cabaña 3'), ('Cabaña 4')
+on conflict (nombre) do nothing;
+
+-- Estado del wizard de /cotizacion en curso por chat — una sola cotización
+-- a la vez por chat (no hace falta más). `step` dice qué está esperando el
+-- bot a continuación; `data` acumula lo ya contestado (ver wizard.ts). Se
+-- borra la fila al terminar o cancelar, no queda historial acá (el PDF ya
+-- generado es el registro real).
+create table if not exists reservas.cotizacion_drafts (
+  chat_id text primary key,
+  step text not null,
+  data jsonb not null default '{}',
+  updated_at timestamptz not null default now()
+);
 
 -- Una reserva = un evento real en el Google Calendar compartido
 -- (google_event_id es el id que devuelve la API al crearlo, para poder

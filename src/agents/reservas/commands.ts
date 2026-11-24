@@ -60,3 +60,11 @@ export function parseReservarCommand(text: string): ParsedReservar | null {
 export function isCabanasCommand(text: string): boolean {
   return normalizeCommand(text) === "cabanas";
 }
+
+export function isCotizacionCommand(text: string): boolean {
+  return normalizeCommand(text) === "cotizacion";
+}
+
+export function isCancelarCommand(text: string): boolean {
+  return normalizeCommand(text) === "cancelar";
+}
